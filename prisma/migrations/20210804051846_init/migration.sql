@@ -19,8 +19,5 @@ CREATE TABLE "Tasks" (
     PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "Tasks.project_id_unique" ON "Tasks"("project_id");
-
 -- AddForeignKey
 ALTER TABLE "Tasks" ADD FOREIGN KEY ("project_id") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;

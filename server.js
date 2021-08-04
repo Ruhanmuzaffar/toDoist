@@ -1,4 +1,5 @@
 const express = require("express");
+const tasksRoute = require("./routes/api/Tasks");
 
 // prisma client
 const { PrismaClient } = require("@prisma/client");
@@ -17,9 +18,6 @@ app.get("/", getProjects);
 
 async function getProjects(req, res) {
   let posts = await prisma.project.findMany();
-  console.log("posts.>>", posts);
-
-  console.log("posts>>", posts);
 
   res.json(posts);
 }
@@ -69,15 +67,14 @@ app.put("/:id", editProject);
 async function editProject(req, res) {
   const projectId = parseInt(req.params.id);
 
-  // check if it exists
-
   const { name, color } = req.body;
-  console.log("updated name", name);
+  console.log("updated name", name, color);
 
   if (!name && !color) {
     return res.json({ msg: "please enter the fields to be changed" });
   }
 
+  // check if it exists
   const project = await prisma.project.findUnique({
     where: {
       id: projectId,
@@ -86,6 +83,8 @@ async function editProject(req, res) {
 
   console.log("proj", project);
   if (project) {
+    //check for empty fields
+
     // update project
     await prisma.project.update({
       where: {
@@ -93,7 +92,7 @@ async function editProject(req, res) {
       },
       data: {
         name: name ? name : project.name,
-        color: color ? color : project.color,
+        color: color ? parseInt(color) : project.color,
       },
     });
     res.json({ msg: "updated sucessfully" });
@@ -128,4 +127,6 @@ async function deleteProject(req, res) {
       .json({ msg: `project with id: ${projectId} does not exist` });
   }
 }
+
+app.use("/", tasksRoute);
 app.listen(port, () => console.log(`Listening at port:${port}`));

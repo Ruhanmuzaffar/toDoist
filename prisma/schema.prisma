@@ -27,5 +27,5 @@ model Tasks{
   completed Boolean @default(false)
   project   Project @relation(fields: [project_id], references: [id])
   
-  project_id Int @unique
+  project_id Int 
 }
