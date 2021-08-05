@@ -10,27 +10,22 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.get("/projects/:projectId/task", getTasks);
+/**
+ *
+ * Apis like that of documentation
+ */
 
-async function getTasks(req, res) {
-  const projectId = req.params.projectId;
+// get all tasks
 
-  const allTasks = await prisma.tasks.findMany({
-    where: {
-      project_id: parseInt(projectId),
-    },
-  });
-
-  if (allTasks.length > 0) {
-    res.json(allTasks);
-  } else {
-    res.status(404).json({ msg: "task not found" });
-  }
+app.get("/tasks", getAllTasks);
+async function getAllTasks(req, res) {
+  const allTasks = await prisma.tasks.findMany();
+  res.json(allTasks);
 }
 
 // get single task
 
-app.get("/projects/:projectId/task/:id", getSingleTask);
+app.get("/tasks/:id", getSingleTask);
 
 async function getSingleTask(req, res) {
   const taskId = req.params.id;
@@ -50,31 +45,48 @@ async function getSingleTask(req, res) {
 
 // create task
 
-app.post("/projects/:projectId/task", createTask);
+app.post("/tasks", createTask);
 
 async function createTask(req, res) {
   // handle foreign key constraint
-  const projectId = req.params.projectId;
-  const { content, description } = req.body;
+
+  const { content, description, project_id } = req.body;
+  console.log("body>>", req.body);
 
   if (!content) {
     return res.status(400).json({
       msg: "Please add task content",
     });
   }
-  // put into tasks with project id from projectId
-  await prisma.tasks.create({
-    data: {
-      content,
-      description: description ? description : "",
-      project_id: parseInt(projectId),
+  if (!project_id) {
+    return res.status(400).json({
+      msg: "Please add project to which to add task ",
+    });
+  }
+
+  const project = await prisma.project.findUnique({
+    where: {
+      id: project_id,
     },
   });
-  res.json({ msg: "task created sucessfully" });
+
+  if (project) {
+    // put into tasks with project id from projectId
+    await prisma.tasks.create({
+      data: {
+        content,
+        description: description ? description : "",
+        project_id,
+      },
+    });
+    res.json({ msg: "task created sucessfully" });
+  } else {
+    res.json({ msg: "Project does not exist" });
+  }
 }
 
 // delete task
-app.delete("/projects/:projectId/task/:id", deteteTask);
+app.delete("/tasks/:id", deteteTask);
 
 async function deteteTask(req, res) {
   const taskId = req.params.id;
@@ -84,7 +96,7 @@ async function deteteTask(req, res) {
       id: parseInt(taskId),
     },
   });
-  console.log("single task>>", singleTask);
+
   if (singleTask) {
     //delete task
     await prisma.tasks.delete({
@@ -98,9 +110,10 @@ async function deteteTask(req, res) {
   }
 }
 
+
 // update task
 
-app.put("/projects/:projectId/task/:id", editTask);
+app.put("/tasks/:id", editTask);
 
 async function editTask(req, res) {
   const taskId = parseInt(req.params.id);
@@ -108,7 +121,7 @@ async function editTask(req, res) {
   // check if it exists
 
   const { content, description } = req.body;
-  console.log("updated content", content);
+
 
   if (!content) {
     return res.json({

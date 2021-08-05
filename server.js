@@ -1,5 +1,6 @@
 const express = require("express");
 const tasksRoute = require("./routes/api/Tasks");
+const tasksDocsRoute = require("./routes/api/TasksDocs");
 
 // prisma client
 const { PrismaClient } = require("@prisma/client");
@@ -12,9 +13,12 @@ const port = 5000;
 //body parser
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/", getProjects);
+app.get("/", (req, res) => {
+  res.send("welcome");
+});
+app.get("/projects", getProjects);
 
 async function getProjects(req, res) {
   let posts = await prisma.project.findMany();
@@ -24,7 +28,7 @@ async function getProjects(req, res) {
 
 // get single project
 
-app.get("/:id", getSingleProject);
+app.get("/projects/:id", getSingleProject);
 
 async function getSingleProject(req, res) {
   const projectId = parseInt(req.params.id);
@@ -43,13 +47,14 @@ async function getSingleProject(req, res) {
 }
 
 // create project
-app.post("/", createProject);
+app.post("/projects/", createProject);
 
 async function createProject(req, res) {
   const { name, color } = req.body;
+  console.log("resq", req.body);
 
-  if (!name || !color) {
-    return res.status(400).json({ msg: "Please include name and color" });
+  if (!name) {
+    return res.status(400).json({ msg: "Please include name " });
   }
   await prisma.project.create({
     data: {
@@ -62,7 +67,7 @@ async function createProject(req, res) {
 }
 
 // edit projects
-app.put("/:id", editProject);
+app.put("/projects/:id", editProject);
 
 async function editProject(req, res) {
   const projectId = parseInt(req.params.id);
@@ -105,7 +110,7 @@ async function editProject(req, res) {
 
 // Delete
 
-app.delete("/:id", deleteProject);
+app.delete("/projects/:id", deleteProject);
 async function deleteProject(req, res) {
   const projectId = parseInt(req.params.id);
   const project = await prisma.project.findUnique({
@@ -129,4 +134,7 @@ async function deleteProject(req, res) {
 }
 
 app.use("/", tasksRoute);
+// api as per docs
+
+app.use("/", tasksDocsRoute);
 app.listen(port, () => console.log(`Listening at port:${port}`));
