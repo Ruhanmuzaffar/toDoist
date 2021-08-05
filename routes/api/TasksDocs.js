@@ -77,14 +77,9 @@ async function createTask(req, res) {
 
     if (project) {
       // put into tasks with project id from projectId
-      await prisma.tasks.create({
-        data: {
-          content,
-          description: description ? description : "",
-          project_id,
-        },
-      });
-      res.json({ msg: "task created sucessfully" });
+
+      const task = await queries.createTask(content, description, project_id);
+      res.json({ msg: "task created sucessfully", task });
     } else {
       res.json({ msg: "Project does not exist" });
     }
@@ -102,11 +97,7 @@ async function deteteTask(req, res) {
 
     if (singleTask) {
       //delete task
-      await prisma.tasks.delete({
-        where: {
-          id: parseInt(taskId),
-        },
-      });
+      await queries.deleteTask(taskId);
       res.json({ msg: "task deleted sucessfully" });
     } else {
       res.status(400).json({ msg: "task does not exist" });
@@ -134,23 +125,11 @@ async function editTask(req, res) {
   }
 
   try {
-    const task = await prisma.tasks.findUnique({
-      where: {
-        id: taskId,
-      },
-    });
+    const task = await queries.findTaskById(taskId);
 
     if (task) {
       // update task
-      await prisma.tasks.update({
-        where: {
-          id: parseInt(taskId),
-        },
-        data: {
-          content: content ? content : task.content,
-          description: description ? description : task.description,
-        },
-      });
+      await queries.editTask(task,taskId,content,description)
       res.json({ msg: "updated sucessfully" });
     } else {
       res.status(404).json({ msg: `task with id: ${taskId} does not exist` });

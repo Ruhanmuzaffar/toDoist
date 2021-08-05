@@ -59,6 +59,36 @@ function findTaskById(id) {
     },
   });
 }
+
+function createTask(content, description, project_id) {
+  return prisma.tasks.create({
+    data: {
+      content,
+      description: description ? description : "",
+      project_id,
+    },
+  });
+}
+
+function deleteTask(id) {
+  return prisma.tasks.delete({
+    where: {
+      id: parseInt(id),
+    },
+  });
+}
+
+function editTask(task, id, content, description) {
+  return prisma.tasks.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      content: content ? content : task.content,
+      description: description ? description : task.description,
+    },
+  });
+}
 module.exports = {
   findAllProjects,
   findProjectById,
@@ -67,4 +97,7 @@ module.exports = {
   deleteProject,
   findAllTasks,
   findTaskById,
+  createTask,
+  deleteTask,
+  editTask,
 };

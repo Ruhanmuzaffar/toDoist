@@ -30,10 +30,10 @@ app.get("/projects/:id", utils.getSingleProject);
 // create project
 app.post("/projects/", utils.createProject);
 
-// edit projects
+// edit project
 app.put("/projects/:id", utils.editProject);
 
-// Delete
+// Delete project
 
 app.delete("/projects/:id", utils.deleteProject);
 

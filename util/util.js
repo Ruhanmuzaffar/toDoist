@@ -44,7 +44,7 @@ async function createProject(req, res) {
   }
 }
 
-// edit projects
+// edit project
 async function editProject(req, res) {
   const projectId = parseInt(req.params.id);
 
@@ -76,7 +76,7 @@ async function editProject(req, res) {
   }
 }
 
-// Delete
+// Delete project
 
 async function deleteProject(req, res) {
   const projectId = parseInt(req.params.id);
@@ -96,6 +96,8 @@ async function deleteProject(req, res) {
       .json({ msg: `project with id: ${projectId} does not exist` });
   }
 }
+
+
 
 module.exports = {
   getProjects,
