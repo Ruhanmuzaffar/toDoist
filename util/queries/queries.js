@@ -18,7 +18,7 @@ const createProject = async (name, color) => {
   return prisma.project.create({
     data: {
       name,
-      color: parseInt(color),
+      color: color ? parseInt(color) : 0,
     },
   });
 };
