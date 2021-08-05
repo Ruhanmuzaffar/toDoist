@@ -22,15 +22,12 @@ app.get("/", (req, res) => {
 app.get("/projects", getProjects);
 
 async function getProjects(req, res) {
-
   try {
-    
     let projects = await queries.findAllProjects();
     res.json(projects);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-
 }
 
 // get single project
@@ -40,9 +37,8 @@ app.get("/projects/:id", getSingleProject);
 async function getSingleProject(req, res) {
   const projectId = parseInt(req.params.id);
   try {
-    
     const project = await queries.findProjectById(projectId);
-  
+
     if (project) {
       res.json(project);
     } else {
@@ -51,7 +47,7 @@ async function getSingleProject(req, res) {
         .json({ msg: `project with id: ${projectId} does not exist` });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 
@@ -89,14 +85,13 @@ async function editProject(req, res) {
 
   // check if it exists
   try {
-    
     const project = await queries.findProjectById(projectId);
     console.log("proj", project);
     if (project) {
       //check for empty fields
-  
+
       // update project
-  
+
       await queries.updateProject(project, projectId, name, color);
       res.json({ msg: "updated sucessfully" });
     } else {
@@ -105,9 +100,8 @@ async function editProject(req, res) {
         .json({ msg: `project with id: ${projectId} does not exist` });
     }
   } catch (error) {
-    
-  
-
+    console.log(error);
+  }
 }
 
 // Delete
@@ -119,10 +113,9 @@ async function deleteProject(req, res) {
   if (project) {
     // delete proj
     try {
-      
       await queries.deleteProject(projectId);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
 
     res.json({ msg: "project deleted sucessfully" });
@@ -132,9 +125,3 @@ async function deleteProject(req, res) {
       .json({ msg: `project with id: ${projectId} does not exist` });
   }
 }
-
-app.use("/", tasksRoute);
-// api as per docs
-
-app.use("/", tasksDocsRoute);
-app.listen(port, () => console.log(`Listening at port:${port}`));
