@@ -43,10 +43,28 @@ const deleteProject = (id) => {
   });
 };
 
+/**
+ * tasks(docs) related querries
+ *
+ */
+
+function findAllTasks() {
+  return prisma.tasks.findMany();
+}
+
+function findTaskById(id) {
+  return prisma.tasks.findUnique({
+    where: {
+      id: parseInt(id),
+    },
+  });
+}
 module.exports = {
   findAllProjects,
   findProjectById,
   createProject,
   updateProject,
   deleteProject,
+  findAllTasks,
+  findTaskById,
 };

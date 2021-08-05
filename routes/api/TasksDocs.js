@@ -1,5 +1,5 @@
 const express = require("express");
-
+const queries = require("../../util/queries/queries");
 // prisma client
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.get("/tasks", getAllTasks);
 async function getAllTasks(req, res) {
-  const allTasks = await prisma.tasks.findMany();
+  const allTasks = await queries.findAllTasks();
   res.json(allTasks);
 }
 
@@ -30,11 +30,7 @@ app.get("/tasks/:id", getSingleTask);
 async function getSingleTask(req, res) {
   const taskId = req.params.id;
 
-  const singleTask = await prisma.tasks.findUnique({
-    where: {
-      id: parseInt(taskId),
-    },
-  });
+  const singleTask = await queries.findTaskById(taskId);
 
   if (singleTask) {
     res.json(singleTask);
@@ -91,11 +87,7 @@ app.delete("/tasks/:id", deteteTask);
 async function deteteTask(req, res) {
   const taskId = req.params.id;
 
-  const singleTask = await prisma.tasks.findUnique({
-    where: {
-      id: parseInt(taskId),
-    },
-  });
+  const singleTask = await queries.findTaskById(taskId);
 
   if (singleTask) {
     //delete task
@@ -110,7 +102,6 @@ async function deteteTask(req, res) {
   }
 }
 
-
 // update task
 
 app.put("/tasks/:id", editTask);
@@ -121,7 +112,6 @@ async function editTask(req, res) {
   // check if it exists
 
   const { content, description } = req.body;
-
 
   if (!content) {
     return res.json({

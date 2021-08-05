@@ -3,9 +3,6 @@ const tasksRoute = require("./routes/api/Tasks");
 const tasksDocsRoute = require("./routes/api/TasksDocs");
 const queries = require("./util/queries/queries");
 
-//  prisma client
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
 
 const app = express();
 
