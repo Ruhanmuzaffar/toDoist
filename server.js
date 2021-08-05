@@ -62,12 +62,11 @@ async function createProject(req, res) {
     return res.status(400).json({ msg: "Please include name " });
   }
   try {
-    await queries.createProject(name, color);
+    const project = await queries.createProject(name, color);
+    res.status(200).send({ msg: "project added sucessfully", project });
   } catch (err) {
     console.log(err);
   }
-
-  res.status(200).send({ msg: "project added sucessfully" });
 }
 
 // edit projects
