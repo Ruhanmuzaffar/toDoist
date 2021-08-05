@@ -19,8 +19,12 @@ app.use(express.urlencoded({ extended: false }));
 
 app.get("/tasks", getAllTasks);
 async function getAllTasks(req, res) {
-  const allTasks = await queries.findAllTasks();
-  res.json(allTasks);
+  try {
+    const allTasks = await queries.findAllTasks();
+    res.json(allTasks);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // get single task

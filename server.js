@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  res.send("welcome");
+  res.send("<h1>Welcome</h1>");
 });
 app.get("/projects", getProjects);
 
@@ -125,3 +125,8 @@ async function deleteProject(req, res) {
       .json({ msg: `project with id: ${projectId} does not exist` });
   }
 }
+app.use("/", tasksRoute);
+// api as per docs
+
+app.use("/", tasksDocsRoute);
+app.listen(port, () => console.log(`Listening at port:${port}`));
