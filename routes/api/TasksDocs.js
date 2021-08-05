@@ -34,12 +34,16 @@ app.get("/tasks/:id", getSingleTask);
 async function getSingleTask(req, res) {
   const taskId = req.params.id;
 
-  const singleTask = await queries.findTaskById(taskId);
+  try {
+    const singleTask = await queries.findTaskById(taskId);
 
-  if (singleTask) {
-    res.json(singleTask);
-  } else {
-    res.status(400).json({ msg: "task does not exist" });
+    if (singleTask) {
+      res.json(singleTask);
+    } else {
+      res.status(400).json({ msg: "task does not exist" });
+    }
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -64,25 +68,27 @@ async function createTask(req, res) {
     });
   }
 
-  const project = await prisma.project.findUnique({
-    where: {
-      id: project_id,
-    },
-  });
-
-  if (project) {
-    // put into tasks with project id from projectId
-    await prisma.tasks.create({
-      data: {
-        content,
-        description: description ? description : "",
-        project_id,
+  try {
+    const project = await prisma.project.findUnique({
+      where: {
+        id: project_id,
       },
     });
-    res.json({ msg: "task created sucessfully" });
-  } else {
-    res.json({ msg: "Project does not exist" });
-  }
+
+    if (project) {
+      // put into tasks with project id from projectId
+      await prisma.tasks.create({
+        data: {
+          content,
+          description: description ? description : "",
+          project_id,
+        },
+      });
+      res.json({ msg: "task created sucessfully" });
+    } else {
+      res.json({ msg: "Project does not exist" });
+    }
+  } catch (error) {}
 }
 
 // delete task
@@ -91,18 +97,22 @@ app.delete("/tasks/:id", deteteTask);
 async function deteteTask(req, res) {
   const taskId = req.params.id;
 
-  const singleTask = await queries.findTaskById(taskId);
+  try {
+    const singleTask = await queries.findTaskById(taskId);
 
-  if (singleTask) {
-    //delete task
-    await prisma.tasks.delete({
-      where: {
-        id: parseInt(taskId),
-      },
-    });
-    res.json({ msg: "task deleted sucessfully" });
-  } else {
-    res.status(400).json({ msg: "task does not exist" });
+    if (singleTask) {
+      //delete task
+      await prisma.tasks.delete({
+        where: {
+          id: parseInt(taskId),
+        },
+      });
+      res.json({ msg: "task deleted sucessfully" });
+    } else {
+      res.status(400).json({ msg: "task does not exist" });
+    }
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -123,26 +133,30 @@ async function editTask(req, res) {
     });
   }
 
-  const task = await prisma.tasks.findUnique({
-    where: {
-      id: taskId,
-    },
-  });
-
-  if (task) {
-    // update task
-    await prisma.tasks.update({
+  try {
+    const task = await prisma.tasks.findUnique({
       where: {
-        id: parseInt(taskId),
-      },
-      data: {
-        content: content ? content : task.content,
-        description: description ? description : task.description,
+        id: taskId,
       },
     });
-    res.json({ msg: "updated sucessfully" });
-  } else {
-    res.status(404).json({ msg: `task with id: ${taskId} does not exist` });
+
+    if (task) {
+      // update task
+      await prisma.tasks.update({
+        where: {
+          id: parseInt(taskId),
+        },
+        data: {
+          content: content ? content : task.content,
+          description: description ? description : task.description,
+        },
+      });
+      res.json({ msg: "updated sucessfully" });
+    } else {
+      res.status(404).json({ msg: `task with id: ${taskId} does not exist` });
+    }
+  } catch (error) {
+    console.log(error);
   }
 }
 
