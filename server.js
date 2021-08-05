@@ -1,7 +1,7 @@
 const express = require("express");
 const tasksRoute = require("./routes/api/Tasks");
 const tasksDocsRoute = require("./routes/api/TasksDocs");
-const queries = require("./util/queries/queries");
+
 const utils = require("./util/util");
 const app = express();
 

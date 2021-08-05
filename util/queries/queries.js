@@ -65,7 +65,7 @@ function createTask(content, description, project_id) {
     data: {
       content,
       description: description ? description : "",
-      project_id,
+      project_id: parseInt(project_id),
     },
   });
 }
