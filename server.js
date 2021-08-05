@@ -1,6 +1,7 @@
 const express = require("express");
 const tasksRoute = require("./routes/api/Tasks");
 const tasksDocsRoute = require("./routes/api/TasksDocs");
+const queries = require("./util/queries/queries");
 
 //  prisma client
 const { PrismaClient } = require("@prisma/client");
@@ -25,9 +26,9 @@ app.get("/", (req, res) => {
 app.get("/projects", getProjects);
 
 async function getProjects(req, res) {
-  let posts = await prisma.project.findMany();
+  let projects = await queries.findAllProjects();
 
-  res.json(posts);
+  res.json(projects);
 }
 
 // get single project
@@ -36,11 +37,8 @@ app.get("/projects/:id", getSingleProject);
 
 async function getSingleProject(req, res) {
   const projectId = parseInt(req.params.id);
-  const project = await prisma.project.findUnique({
-    where: {
-      id: projectId,
-    },
-  });
+  const project = await queries.findProjectById(projectId);
+
   if (project) {
     res.json(project);
   } else {
@@ -60,12 +58,7 @@ async function createProject(req, res) {
   if (!name) {
     return res.status(400).json({ msg: "Please include name " });
   }
-  await prisma.project.create({
-    data: {
-      name,
-      color: parseInt(color),
-    },
-  });
+  await queries.createProject(name, color);
 
   res.status(200).send({ msg: "project added sucessfully" });
 }
@@ -84,26 +77,15 @@ async function editProject(req, res) {
   }
 
   // check if it exists
-  const project = await prisma.project.findUnique({
-    where: {
-      id: projectId,
-    },
-  });
+  const project = await queries.findProjectById(projectId);
 
   console.log("proj", project);
   if (project) {
     //check for empty fields
 
     // update project
-    await prisma.project.update({
-      where: {
-        id: parseInt(projectId),
-      },
-      data: {
-        name: name ? name : project.name,
-        color: color ? parseInt(color) : project.color,
-      },
-    });
+
+    await queries.updateProject(project, projectId, name, color);
     res.json({ msg: "updated sucessfully" });
   } else {
     res
@@ -117,18 +99,11 @@ async function editProject(req, res) {
 app.delete("/projects/:id", deleteProject);
 async function deleteProject(req, res) {
   const projectId = parseInt(req.params.id);
-  const project = await prisma.project.findUnique({
-    where: {
-      id: projectId,
-    },
-  });
+  const project = queries.findProjectById(projectId);
   if (project) {
     // delete proj
-    await prisma.project.delete({
-      where: {
-        id: parseInt(projectId),
-      },
-    });
+    await queries.deleteProject(projectId);
+
     res.json({ msg: "project deleted sucessfully" });
   } else {
     res
