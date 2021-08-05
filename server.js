@@ -10,6 +10,10 @@ const app = express();
 
 const port = process.env.PORT || 5000;
 
+// cors
+const cors = require("cors");
+app.use(cors());
+
 //body parser
 
 app.use(express.json());
