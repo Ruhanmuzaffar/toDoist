@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 const app = express();
 
-const port = 5000;
+const port = process.env.port|| 5000;
 
 //body parser
 
