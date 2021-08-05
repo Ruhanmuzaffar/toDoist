@@ -2,7 +2,7 @@ const express = require("express");
 const tasksRoute = require("./routes/api/Tasks");
 const tasksDocsRoute = require("./routes/api/TasksDocs");
 
-// prisma client
+//  prisma client
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
