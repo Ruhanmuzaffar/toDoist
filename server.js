@@ -3,7 +3,6 @@ const tasksRoute = require("./routes/api/Tasks");
 const tasksDocsRoute = require("./routes/api/TasksDocs");
 const queries = require("./util/queries/queries");
 
-
 const app = express();
 
 const port = process.env.PORT || 5000;
@@ -23,9 +22,15 @@ app.get("/", (req, res) => {
 app.get("/projects", getProjects);
 
 async function getProjects(req, res) {
-  let projects = await queries.findAllProjects();
 
-  res.json(projects);
+  try {
+    
+    let projects = await queries.findAllProjects();
+    res.json(projects);
+  } catch (error) {
+    console.log(error)
+  }
+
 }
 
 // get single project
@@ -34,14 +39,19 @@ app.get("/projects/:id", getSingleProject);
 
 async function getSingleProject(req, res) {
   const projectId = parseInt(req.params.id);
-  const project = await queries.findProjectById(projectId);
-
-  if (project) {
-    res.json(project);
-  } else {
-    res
-      .status(404)
-      .json({ msg: `project with id: ${projectId} does not exist` });
+  try {
+    
+    const project = await queries.findProjectById(projectId);
+  
+    if (project) {
+      res.json(project);
+    } else {
+      res
+        .status(404)
+        .json({ msg: `project with id: ${projectId} does not exist` });
+    }
+  } catch (error) {
+    console.log(error)
   }
 }
 
@@ -55,7 +65,11 @@ async function createProject(req, res) {
   if (!name) {
     return res.status(400).json({ msg: "Please include name " });
   }
-  await queries.createProject(name, color);
+  try {
+    await queries.createProject(name, color);
+  } catch (err) {
+    console.log(err);
+  }
 
   res.status(200).send({ msg: "project added sucessfully" });
 }
@@ -74,21 +88,26 @@ async function editProject(req, res) {
   }
 
   // check if it exists
-  const project = await queries.findProjectById(projectId);
+  try {
+    
+    const project = await queries.findProjectById(projectId);
+    console.log("proj", project);
+    if (project) {
+      //check for empty fields
+  
+      // update project
+  
+      await queries.updateProject(project, projectId, name, color);
+      res.json({ msg: "updated sucessfully" });
+    } else {
+      res
+        .status(404)
+        .json({ msg: `project with id: ${projectId} does not exist` });
+    }
+  } catch (error) {
+    
+  
 
-  console.log("proj", project);
-  if (project) {
-    //check for empty fields
-
-    // update project
-
-    await queries.updateProject(project, projectId, name, color);
-    res.json({ msg: "updated sucessfully" });
-  } else {
-    res
-      .status(404)
-      .json({ msg: `project with id: ${projectId} does not exist` });
-  }
 }
 
 // Delete
@@ -99,7 +118,12 @@ async function deleteProject(req, res) {
   const project = queries.findProjectById(projectId);
   if (project) {
     // delete proj
-    await queries.deleteProject(projectId);
+    try {
+      
+      await queries.deleteProject(projectId);
+    } catch (error) {
+      console.log(error)
+    }
 
     res.json({ msg: "project deleted sucessfully" });
   } else {
