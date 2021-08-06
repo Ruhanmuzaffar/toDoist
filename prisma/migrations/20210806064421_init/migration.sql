@@ -14,10 +14,10 @@ CREATE TABLE "Tasks" (
     "content" VARCHAR(255) NOT NULL,
     "description" VARCHAR(255) NOT NULL,
     "completed" BOOLEAN NOT NULL DEFAULT false,
-    "project_id" INTEGER NOT NULL,
+    "project_id" INTEGER,
 
     PRIMARY KEY ("id")
 );
 
 -- AddForeignKey
-ALTER TABLE "Tasks" ADD FOREIGN KEY ("project_id") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Tasks" ADD FOREIGN KEY ("project_id") REFERENCES "Project"("id") ON DELETE SET NULL ON UPDATE CASCADE;
