@@ -85,11 +85,10 @@ async function deleteProject(req, res) {
     // delete proj
     try {
       await queries.deleteProject(projectId);
+      res.json({ msg: "project deleted sucessfully" });
     } catch (error) {
-      console.log(error);
+      console.log("error in deleting project", error);
     }
-
-    res.json({ msg: "project deleted sucessfully" });
   } else {
     res
       .status(404)

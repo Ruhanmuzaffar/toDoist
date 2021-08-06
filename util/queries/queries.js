@@ -35,8 +35,20 @@ const updateProject = (project, id, name, color) => {
   });
 };
 
-const deleteProject = (id) => {
-  return prisma.project.delete({
+const deleteProject = async (id) => {
+  /**
+   * delete all tasks in this project (cascade delete )
+   * doing it manually as cascade delelte is not working
+   */
+
+  await prisma.tasks.deleteMany({
+    where: {
+      project_id: parseInt(id),
+    },
+  });
+
+  // delete project
+  await prisma.project.delete({
     where: {
       id: parseInt(id),
     },
