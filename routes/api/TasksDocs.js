@@ -1,9 +1,5 @@
 const express = require("express");
-const queries = require("../../util/queries/queries");
 const utils = require("../../util/util");
-// prisma client
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
 
 const app = express();
 //body parser
@@ -15,6 +11,7 @@ app.use(express.urlencoded({ extended: false }));
  *
  * Apis like that of documentation
  */
+
 
 // get all tasks
 

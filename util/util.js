@@ -1,5 +1,9 @@
 const queries = require("./queries/queries");
 
+/**
+ * -------------------------------functions for projects-------------------------------------
+ */
+
 // get all projects
 async function getProjects(req, res) {
   try {
@@ -95,6 +99,10 @@ async function deleteProject(req, res) {
       .json({ msg: `project with id: ${projectId} does not exist` });
   }
 }
+
+/**
+ * -------------------------------functions for tasks-------------------------------------
+ */
 
 // get all tasks
 

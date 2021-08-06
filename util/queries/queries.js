@@ -2,6 +2,13 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+
+
+/**
+ * -------------------------------queries for projects-------------------------------------
+ */
+
+
 const findAllProjects = () => {
   return prisma.project.findMany();
 };
@@ -56,7 +63,7 @@ const deleteProject = async (id) => {
 };
 
 /**
- * tasks(docs) related querries
+ * --------------------------------tasks(docs) related querries-------------------------------
  *
  */
 
