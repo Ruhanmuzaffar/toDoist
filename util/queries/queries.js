@@ -2,12 +2,9 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-
-
 /**
  * -------------------------------queries for projects-------------------------------------
  */
-
 
 const findAllProjects = () => {
   return prisma.project.findMany();
@@ -97,7 +94,7 @@ function deleteTask(id) {
   });
 }
 
-function editTask(task, id, content, description) {
+function editTask(task, id, content, description, completed) {
   return prisma.tasks.update({
     where: {
       id: parseInt(id),
@@ -105,6 +102,7 @@ function editTask(task, id, content, description) {
     data: {
       content: content ? content : task.content,
       description: description ? description : task.description,
+      completed: completed ? completed : task.completed,
     },
   });
 }

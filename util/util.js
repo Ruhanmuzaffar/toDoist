@@ -193,7 +193,7 @@ async function editTask(req, res) {
 
   // check if it exists
 
-  const { content, description } = req.body;
+  const { content, description ,completed} = req.body;
 
   if (!content) {
     return res.json({
@@ -206,7 +206,7 @@ async function editTask(req, res) {
 
     if (task) {
       // update task
-      await queries.editTask(task, taskId, content, description);
+      await queries.editTask(task, taskId, content, description,completed);
       res.json({ msg: "updated sucessfully" });
     } else {
       res.status(404).json({ msg: `task with id: ${taskId} does not exist` });
